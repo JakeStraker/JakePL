@@ -10,7 +10,6 @@
 
 void print_help() {
 	std::cerr << "Application usage:" << std::endl;
-
 	std::cerr << "  -p : select platform " << std::endl;
 	std::cerr << "  -d : select device" << std::endl;
 	std::cerr << "  -l : list all platforms and devices" << std::endl;
@@ -202,7 +201,7 @@ int main(int argc, char **argv) {
 				}
 				cout << "Text file read in correctly\n";
 				myfile.close();
-		}
+			}
 		size_t vector_elements = temperature.size();//number of elements
 		size_t vector_size = temperature.size()*sizeof(int);//size in bytes
 
@@ -211,7 +210,6 @@ int main(int argc, char **argv) {
 
 		//host - output
 		std::vector<int> outputList(vector_elements);
-
 		std::vector<mytype> histOutput(vector_elements);
 		size_t output_size = histOutput.size()*sizeof(mytype);//size in bytes
 
@@ -233,41 +231,35 @@ int main(int argc, char **argv) {
 		float MinV = 0;
 		int runningTotal = 0;
 
-				output = (float)(averageTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
-				output /= 10.0f;
-				output = output / vector_elements;
-				std::cout << "The average temperature is = " << output << std::endl;
-
-
-				output = (float)(minTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
-				MinV = output;
-				output /= 10.0f;
-				std::cout << "The minimum temperature is = " << output << std::endl;
-				
-
-				output = (float)(maxTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
-				MaxV = output;
-				output /= 10.0f;
-				std::cout << "The maximum temperature is = " << output << std::endl;
-				
-				//if the input vector is not a multiple of the local_size
-				//insert additional neutral elements (0 for addition) so that the total will not be affected
-				if (padding_size) {
-					//create an extra vector with neutral values
-					std::vector<int> A_ext(local_size - padding_size, 100000);
-					//append that extra vector to our input
-					temperature.insert(temperature.end(), A_ext.begin(), A_ext.end());
-				}
-				std::cout << "Enter number of Histogram Bins"<<endl;
-				int binNum = 1;
-				cin >> binNum;
-				outputList = (hist_simple(program, buffer_A, buffer_output_size, queue, vector_size, vector_elements, outputList, local_size, binNum, MinV, MaxV));
-				float increment = ((MaxV - MinV) / binNum);
-				for (int i = 1; i < binNum+1; i++) {
-					//std::cout << "Bin " << i+1 << ": " << outputList[i] << std::endl;
-					std::cout << "(" << ((MinV + ((i-1)*increment))/10) << ") - (" << ((MinV + (i*increment))/10) << "):  " << (outputList[i-1]) << std::endl;
-				}
-				
+		output = (float)(averageTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
+		output /= 10.0f;
+		output = output / vector_elements;
+		std::cout << "The average temperature is = " << output << std::endl;
+		output = (float)(minTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
+		MinV = output;
+		output /= 10.0f;
+		std::cout << "The minimum temperature is = " << output << std::endl;
+		output = (float)(maxTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
+		MaxV = output;
+		output /= 10.0f;
+		std::cout << "The maximum temperature is = " << output << std::endl;
+		//if the input vector is not a multiple of the local_size
+		//insert additional neutral elements (0 for addition) so that the total will not be affected
+		//if (padding_size) {
+		//	//create an extra vector with neutral values
+		//	std::vector<int> A_ext(local_size - padding_size, 100000);
+		//	//append that extra vector to our input
+		//	temperature.insert(temperature.end(), A_ext.begin(), A_ext.end());
+		//}
+		std::cout << "Enter number of Histogram Bins"<<endl;
+		int binNum = 1;
+		cin >> binNum;
+		outputList = (hist_simple(program, buffer_A, buffer_output_size, queue, vector_size, vector_elements, outputList, local_size, binNum, MinV, MaxV));
+		float increment = ((MaxV - MinV) / binNum);
+		for (int i = 1; i < binNum+1; i++) {
+			//std::cout << "Bin " << i+1 << ": " << outputList[i] << std::endl;
+			std::cout << "(" << ((MinV + ((i-1)*increment))/10) << ") - (" << ((MinV + (i*increment))/10) << "):  " << (outputList[i-1]) << std::endl;
+		}		
 	}
 	catch (cl::Error err) {
 		std::cerr << "ERROR: " << err.what() << ", " << getErrorString(err.err()) << std::endl;
