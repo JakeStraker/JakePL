@@ -203,7 +203,6 @@ int main(int argc, char **argv) {
 				cout << "Text file read in correctly\n";
 				myfile.close();
 		}
-		
 		size_t vector_elements = temperature.size();//number of elements
 		size_t vector_size = temperature.size()*sizeof(int);//size in bytes
 
@@ -230,10 +229,9 @@ int main(int argc, char **argv) {
 
 
 		float output = 0.0f;
-		int MaxV = 0;
-		int MinV = 0;
+		float MaxV = 0;
+		float MinV = 0;
 		int runningTotal = 0;
-		int binWidth = 5;
 
 				output = (float)(averageTemperature(program, buffer_A, buffer_B, queue, vector_size, vector_elements, outputList, local_size));
 				output /= 10.0f;
@@ -260,9 +258,14 @@ int main(int argc, char **argv) {
 					//append that extra vector to our input
 					temperature.insert(temperature.end(), A_ext.begin(), A_ext.end());
 				}
-				outputList = (hist_simple(program, buffer_A, buffer_output_size, queue, vector_size, vector_elements, outputList, local_size, binWidth, MinV, MaxV));
-				for (int i = 0; i < binWidth+2; i++) {
-					std::cout << "Bin " << i << ": " << outputList[i] << std::endl;
+				std::cout << "Enter number of Histogram Bins"<<endl;
+				int binNum = 1;
+				cin >> binNum;
+				outputList = (hist_simple(program, buffer_A, buffer_output_size, queue, vector_size, vector_elements, outputList, local_size, binNum, MinV, MaxV));
+				float increment = ((MaxV - MinV) / binNum);
+				for (int i = 1; i < binNum+1; i++) {
+					//std::cout << "Bin " << i+1 << ": " << outputList[i] << std::endl;
+					std::cout << "(" << ((MinV + ((i-1)*increment))/10) << ") - (" << ((MinV + (i*increment))/10) << "):  " << (outputList[i-1]) << std::endl;
 				}
 				
 	}

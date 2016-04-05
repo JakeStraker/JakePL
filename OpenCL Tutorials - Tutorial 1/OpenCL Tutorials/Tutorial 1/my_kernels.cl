@@ -76,13 +76,20 @@ __kernel void hist_simple(__global const int* temperature, __global int* output,
 	int n = 0;
 	int increment = range/bincount;
 	int topBound = maxval - increment;
-	while (i <= (topBound))
+	int compareval = minval + increment;
+	while (i > compareval)
 	{
-	i += increment;
-	n++;
+		compareval += increment;
+		n++;
 	}
-	n = bincount - n;
 	atomic_inc(&output[n]);
+//	while (i <= (topBound))
+//	{
+//	i += increment;
+//	n++;
+//	}
+//	n = bincount - n;
+//	atomic_inc(&output[n]);
 
 //	if (bin_index < 0) { atomic_inc(&output[0]);}
 //	else if (bin_index >= 0 && bin_index < 100){  atomic_inc(&output[1]);}
