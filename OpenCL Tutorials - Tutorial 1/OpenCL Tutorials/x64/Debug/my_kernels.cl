@@ -68,14 +68,27 @@ __kernel void minTemperature(__global const int* temperature, __global int* outp
 }
 
 //a very simple histogram implementation
-__kernel void hist_simple(__global const int* temperature, __global int* output, int count) { 
+__kernel void hist_simple(__global const int* temperature, __global int* output, int bincount, int minval, int maxval) { 
 	int id = get_global_id(0);
 	int bin_index = temperature[id];
-	if (bin_index < 0) { atomic_inc(&output[0]);}
-	else if (bin_index >= 0 && bin_index < 100){  atomic_inc(&output[1]);}
-	else if (bin_index >= 100 && bin_index < 200){  atomic_inc(&output[2]);}
-	else if (bin_index >= 200 && bin_index < 300){  atomic_inc(&output[3]);}
-	else if (bin_index >= 300 && bin_index < 400){  atomic_inc(&output[4]);}
+	int range = maxval-minval;
+	int i = bin_index;
+	int n = 0;
+	int increment = range/bincount;
+	int topBound = maxval - increment;
+	while (i <= (topBound))
+	{
+	i += increment;
+	n++;
+	}
+	n = bincount - n;
+	atomic_inc(&output[n]);
+
+//	if (bin_index < 0) { atomic_inc(&output[0]);}
+//	else if (bin_index >= 0 && bin_index < 100){  atomic_inc(&output[1]);}
+//	else if (bin_index >= 100 && bin_index < 200){  atomic_inc(&output[2]);}
+//	else if (bin_index >= 200 && bin_index < 300){  atomic_inc(&output[3]);}
+//	else if (bin_index >= 300 && bin_index < 400){  atomic_inc(&output[4]);}
 }
 
 

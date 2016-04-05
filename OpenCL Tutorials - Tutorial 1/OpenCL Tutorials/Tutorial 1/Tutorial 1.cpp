@@ -261,7 +261,7 @@ int main(int argc, char **argv) {
 					temperature.insert(temperature.end(), A_ext.begin(), A_ext.end());
 				}
 				outputList = (hist_simple(program, buffer_A, buffer_output_size, queue, vector_size, vector_elements, outputList, local_size, binWidth, MinV, MaxV));
-				for (int i = 0; i < binWidth; i++) {
+				for (int i = 0; i < binWidth+2; i++) {
 					std::cout << "Bin " << i << ": " << outputList[i] << std::endl;
 				}
 				
